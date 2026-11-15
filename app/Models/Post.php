@@ -19,6 +19,9 @@ class Post extends Model
         'status',
         'published_at',
     ];
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
+    }
     public function category(): BelongsTo {
         return $this->belongsTo(Category::class);
     }

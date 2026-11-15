@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -14,7 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::with(['user', 'category'])->latest()->paginate(10);
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -22,7 +24,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Post::class);
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
     }
 
     /**
@@ -37,9 +41,10 @@ class PostController extends Controller
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id'
         ]);
+        $validated['slug'] = \Illuminate\Support\Str::slug($validated['title']);
 
         $request->user()->posts()->create($validated);
-        return redirect()->route('posts.index');
+        return redirect()->route('posts.index')->with('success', 'Post created successfully!');
     }
 
     /**
