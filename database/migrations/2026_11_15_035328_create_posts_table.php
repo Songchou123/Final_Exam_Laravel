@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->foreignId('category_id')->constrained()->restrictOnUpdate();
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->restrictOnDelete();
             $table->string('title');
+            $table->string('slug')->unique();
             $table->longText('content');
             $table->string('image')->nullable();
             $table->string('status')->default('draft');
